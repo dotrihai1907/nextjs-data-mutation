@@ -48,6 +48,7 @@ export async function createPost(
     userId: 1,
   });
 
+  revalidatePath("/", "layout");
   redirect("/feed");
 }
 
