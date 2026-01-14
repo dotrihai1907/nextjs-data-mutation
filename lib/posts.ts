@@ -71,6 +71,8 @@ export async function getPosts(maxNumber?: number) {
     userFirstName: string;
     createdAt: string;
     content: string;
+    likes: number;
+    isLiked: boolean;
   }>;
 }
 
