@@ -15,7 +15,7 @@ function Post({ post }: { post: Post }) {
   return (
     <article className="post">
       <div className="post-image">
-        <img src={post.image} alt={post.title} />
+        {post.image && <img src={post.image} alt={post.title} />}
       </div>
       <div className="post-content">
         <header>
