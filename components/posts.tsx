@@ -1,10 +1,10 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
-import { formatDate } from "@/lib/format";
-import LikeButton from "./like-icon";
 import { togglePostLikeState } from "@/actions/posts";
+import { formatDate } from "@/lib/format";
+import Image, { ImageLoaderProps } from "next/image";
 import { useOptimistic } from "react";
+import LikeButton from "./like-icon";
 
 type Post = {
   image: string;
@@ -17,6 +17,13 @@ type Post = {
   isLiked: boolean;
 };
 
+function imageLoader(config: ImageLoaderProps): string {
+  const urlStart = config.src.split("upload/")[0];
+  const urlEnd = config.src.split("upload/")[1];
+  const transformation = `w_${200},q_${config.quality}`;
+  return `${urlStart}upload/${transformation}/${urlEnd}`;
+}
+
 function Post({
   post,
   action,
@@ -27,7 +34,17 @@ function Post({
   return (
     <article className="post">
       <div className="post-image">
-        {post.image && <img src={post.image} alt={post.title} />}
+        {post.image && (
+          <Image
+            src={post.image}
+            loading="eager"
+            loader={imageLoader}
+            alt={post.title}
+            quality={50}
+            width={200}
+            height={120}
+          />
+        )}
       </div>
       <div className="post-content">
         <header>
@@ -60,7 +77,7 @@ export default function Posts({ posts }: { posts: Post[] }) {
     posts,
     (prevPosts, updatedPostId: number) => {
       const updatedPostIndex = prevPosts.findIndex(
-        (post) => post.id === updatedPostId
+        (post) => post.id === updatedPostId,
       );
       if (updatedPostIndex === -1) {
         return prevPosts;
@@ -72,7 +89,7 @@ export default function Posts({ posts }: { posts: Post[] }) {
       const newPosts = [...prevPosts];
       newPosts[updatedPostIndex] = updatedPost;
       return newPosts;
-    }
+    },
   );
 
   if (!optimisticPosts || optimisticPosts.length === 0) {
